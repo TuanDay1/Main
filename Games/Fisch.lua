@@ -75,16 +75,16 @@ main_Tab:Toggle(
     end
 )
 
----------------------------------------------------------- MOREE
-local more_Tab = window:CreateTab("Thêm", "rbxassetid://113518381337162")
-more_Tab:Toggle(
-    "Tham gia lại máy chủ",
-    "Tham gia lại máy chủ này",
-    false,
-    function(value: boolean)
-        TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId)
-    end
-)
+---------------------------------------------------------- MORE
+-- local more_Tab = window:CreateTab("Thêm", "rbxassetid://113518381337162")
+-- more_Tab:Toggle(
+--     "Tham gia lại máy chủ",
+--     "Tham gia lại máy chủ này",
+--     false,
+--     function(value: boolean)
+--         TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId)
+--     end
+-- )
 
 ---------------------------------------------------------- SETTINGS
 local setting_Tab = window:CreateTab("Cài đặt", "rbxassetid://113518381337162")
