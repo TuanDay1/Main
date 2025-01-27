@@ -55,7 +55,7 @@ local UILib = {
 
     Tabs = {},
 
-	MinimizeKey = Enum.KeyCode.CapsLock,
+	MinimizeKey = Enum.KeyCode.RightShift,
 }
 
 local player = Players.LocalPlayer
