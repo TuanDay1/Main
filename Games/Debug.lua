@@ -85,7 +85,7 @@ end
 more_Tab:Toggle(
     "Tự động tham gia lại (Thời gian)",
     "Tự động tham gia lại sau khi đã hết thời gian đã đặt trước đó",
-    _env.Config["Rejoin Timer"].Enable or false,
+    (_env.Config["Rejoin Timer"] and _env.Config["Rejoin Timer"]["Enable"]) or false,
     function(value)
         updateSettting("Rejoin Timer/Enable", value)
         if value == true then
@@ -95,7 +95,7 @@ more_Tab:Toggle(
 )
 more_Tab:Slider(
     "Đặt thời gian tự động tham gia lại",
-    _env.Config["Rejoin Timer"]["Minute"] or 60,
+    (_env.Config["Rejoin Timer"] and _env.Config["Rejoin Timer"]["Minute"]) or 60,
     1,
     300,
     function(value)
