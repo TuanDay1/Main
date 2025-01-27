@@ -5,8 +5,8 @@ local _httpget = httpget or game.HttpGet or function () end
 local _setclipboard = setclipboard or function () end
 
 ------------------------------------------------
-local UILib = loadstring(_httpget(game, "https://phanphu.site/NTC/library/UILib.lua"))()
-local FileManager = loadstring(_httpget(game, "https://raw.githubusercontent.com/TuanDay1/Hub/refs/heads/main/Library/FileManager.lua"))()
+local UILib = loadstring(_httpget(game, "https://raw.githubusercontent.com/TuanDay1/Main/refs/heads/main/Library/UILib.lua"))()
+local FileManager = loadstring(_httpget(game, "https://raw.githubusercontent.com/TuanDay1/Main/refs/heads/main/Library/FileManager.lua"))()
 ------------------------------------------------
 
 ----- Services -----
