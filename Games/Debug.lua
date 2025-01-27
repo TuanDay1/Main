@@ -67,18 +67,45 @@ end)
 
 ---------------------------------------------------------- MORE
 local more_Tab = window:CreateTab("Thêm", "rbxassetid://113518381337162")
-more_Tab:Button(
-    "Tham gia lại máy chủ",
-    function()
-        TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId)
-    end
-)
 more_Tab:Toggle(
     "Tự động tham gia lại (Bị đuổi)",
     "Tự động tham gia lại nếu như bị trò chơi đuổi",
     _env.Config["Auto Rejoin"] or false,
     function(value)
         updateSettting("Auto Rejoin", value)
+    end
+)
+local function rejoinTimer()
+    while _env.Config["Rejoin Timer"].Enable do
+        task.wait(_env.Config["Rejoin Timer"].Minute * 60)
+        if _env.Config["Rejoin Timer"].Enable == false then break end
+        TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId)
+    end
+end
+more_Tab:Toggle(
+    "Tự động tham gia lại (Thời gian)",
+    "Tự động tham gia lại sau khi đã hết thời gian đã đặt trước đó",
+    _env.Config["Rejoin Timer"].Enable or false,
+    function(value)
+        updateSettting("Rejoin Timer/Enable", value)
+        if value == true then
+            rejoinTimer()
+        end
+    end
+)
+more_Tab:Slider(
+    "Đặt thời gian tự động tham gia lại",
+    _env.Config["Rejoin Timer"]["Minute"] or 60,
+    1,
+    300,
+    function(value)
+        updateSettting("Rejoin Timer/Minute", value)
+    end
+)
+more_Tab:Button(
+    "Tham gia lại máy chủ",
+    function()
+        TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId)
     end
 )
 
@@ -165,6 +192,6 @@ setting_Tab:Button(
             _setclipboard("getgenv().Config = "..serializedString)
         end
 
-        window:SendNotification("Config", "Đã sao chép cài đặt vào bộ nhớ đệm của bạn", nil, 5)
+        window:Notify("Config", "Đã sao chép cài đặt vào bộ nhớ đệm của bạn", nil, 5)
     end
 )
