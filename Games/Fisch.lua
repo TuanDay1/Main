@@ -65,7 +65,6 @@ playerGui.ChildAdded:Connect(function(child: Instance)
 end)
 
 ---------------------------------------------------------- MAIN
-warn(_env.Config["Auto Reel"])
 local main_Tab = window:CreateTab("Chính", "rbxassetid://113518381337162")
 UILib:SelectTab("Chính")
 main_Tab:Toggle(
