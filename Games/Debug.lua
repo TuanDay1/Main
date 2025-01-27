@@ -31,11 +31,7 @@ local function updateSettting(index, value)
         current[index] = value
     else
         for i = 1, #keys - 1 do
-            if current[keys[i]] then
-                current = current[keys[i]]
-            else
-                return
-            end
+            current = current[keys[i]]
         end
         local finalKey = keys[#keys]
         current[finalKey] = value
@@ -192,6 +188,6 @@ setting_Tab:Button(
             _setclipboard("getgenv().Config = "..serializedString)
         end
 
-        window:Notify("Config", "Đã sao chép cài đặt vào bộ nhớ đệm của bạn", nil, 5)
+        UILib:Notify("Config", "Đã sao chép cài đặt vào bộ nhớ đệm của bạn", nil, 5)
     end
 )
