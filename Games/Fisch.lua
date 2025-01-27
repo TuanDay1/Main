@@ -24,15 +24,17 @@ local function updateSettting(index, value)
     local keys = string.split(index, "/")
     local current = _env.Config
     
-    for i = 1, #keys - 1 do
-        if current[keys[i]] then
-            current = current[keys[i]]
-        else
-            return
+    if #keys == 1 then
+        current[index] = value
+    else
+        for i = 1, #keys - 1 do
+            if current[keys[i]] then
+                current = current[keys[i]]
+            else
+                return
+            end
         end
-    end
-    local finalKey = keys[#keys]
-    if current[finalKey] ~= nil then
+        local finalKey = keys[#keys]
         current[finalKey] = value
     end
 
@@ -87,7 +89,7 @@ setting_Tab:Toggle(
     "Lọc sao chép (Gợi ý)",
     "Lọc các cài đặt chưa sử dụng đến hoặc đang tắt",
     true,
-    function(value)
+    function(value: boolean)
         filterCopy = value
     end
 )
@@ -96,7 +98,7 @@ setting_Tab:Toggle(
     "Tối giản sao chép",
     "Tối giản sao chép cài đặt thành một chuỗi duy nhất",
     false,
-    function(value)
+    function(value: boolean)
         minifyCopy = value
     end
 )
