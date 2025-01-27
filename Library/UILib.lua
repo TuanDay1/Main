@@ -914,6 +914,7 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
                 self.toggling = false
             end
             AddConnection(toggleButton.MouseButton1Click, oMouseButton1Click)
+            oMouseButton1Click()
 
             task.spawn(function()
                 if callback then

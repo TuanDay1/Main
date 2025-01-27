@@ -12,6 +12,7 @@ local FileManager = loadstring(_httpget(game, "https://raw.githubusercontent.com
 ----- Services -----
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TeleportService = game:GetService("TeleportService")
 
 ----------Variables----------
 local player = Players.LocalPlayer
@@ -71,6 +72,17 @@ main_Tab:Toggle(
     _env.Config["Auto Reel"] or false,
     function(value: boolean)
         updateSettting("Auto Reel", value)
+    end
+)
+
+---------------------------------------------------------- MOREE
+local more_Tab = window:CreateTab("Thêm", "rbxassetid://113518381337162")
+more_Tab:Toggle(
+    "Tham gia lại máy chủ",
+    "Tham gia lại máy chủ này",
+    false,
+    function(value: boolean)
+        TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId)
     end
 )
 
