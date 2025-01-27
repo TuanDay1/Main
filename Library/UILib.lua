@@ -778,7 +778,7 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
             Parent = MainUI,
             
             Create("UIListLayout", {
-                Padding = UDim.new(0, 10),
+                Padding = UDim.new(0, 5),
                 HorizontalAlignment = Enum.HorizontalAlignment.Left,
             }),
         })
@@ -1197,6 +1197,65 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
             AddConnection(textBoxButton.MouseButton1Click, function()
                 if callback ~= nil then
                     callback(textBox.Text)
+                end
+            end)
+        end
+
+        function tab:Button(buttonText: string, callback)
+            local buttonUI = Create("Frame", {
+                AutomaticSize = Enum.AutomaticSize.Y,
+                Size = UDim2.new(1, 0, 0, 0),
+                AnchorPoint = Vector2.new(0, 0),
+                Position = UDim2.new(0, 0, 0, 0),
+                BackgroundColor3 = UILib.Theme.KeyBackground,
+                Parent = tabList,
+                ZIndex = 5,
+
+                Create("UICorner", {
+                    CornerRadius = UDim.new(0, 4),
+                }),
+
+                Create("Frame", {
+                    AutomaticSize = Enum.AutomaticSize.Y,
+                    Size = UDim2.new(1, 0, 1, 12),
+                    AnchorPoint = Vector2.new(0, 0),
+                    Position = UDim2.new(0, 0, 0, 0),
+                    BackgroundTransparency = 1,
+                    ZIndex = 6,
+                }),
+
+                Create("TextButton", {
+                    Size = UDim2.new(1, -20, 0, 21),
+                    AnchorPoint = Vector2.new(0.5, 0),
+                    Position = UDim2.new(0.5, 0, 0, 10),
+                    BackgroundColor3 = UILib.Theme.ButtonColor,
+                    Text = "",
+                    ZIndex = 6,
+    
+                    Create("UICorner", {
+                        CornerRadius = UDim.new(0, 4),
+                    }),
+    
+                    Create("TextLabel", {
+                        Size = UDim2.fromScale(1, 0.6),
+                        AnchorPoint = Vector2.new(0, 0.5),
+                        Position = UDim2.fromScale(0, 0.5),
+                        RichText = false,
+                        Text = buttonText,
+                        TextColor3 = UILib.Theme.ButtonTextColor,
+                        FontFace = Font.fromName("Montserrat", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal),
+                        TextScaled = true,
+                        TextXAlignment = Enum.TextXAlignment.Center,
+                        BackgroundTransparency = 1,
+                        ZIndex = 7,
+                    }),
+                }),
+            })
+
+            local TextButton = buttonUI.TextButton
+            AddConnection(TextButton.MouseButton1Click, function()
+                if callback ~= nil then
+                    callback()
                 end
             end)
         end
