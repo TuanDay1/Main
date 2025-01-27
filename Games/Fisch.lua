@@ -67,6 +67,7 @@ end)
 ---------------------------------------------------------- MAIN
 warn(_env.Config["Auto Reel"])
 local main_Tab = window:CreateTab("Chính", "rbxassetid://113518381337162")
+UILib:SelectTab("Chính")
 main_Tab:Toggle(
     "Tự động cuộn dây",
     "Tự động cuộn dây khi câu cá",
