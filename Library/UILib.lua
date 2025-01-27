@@ -55,7 +55,7 @@ local UILib = {
 
     Tabs = {},
 
-	MinimizeKey = Enum.KeyCode.RightShift,
+	MinimizeKey = Enum.KeyCode.CapsLock,
 }
 
 local player = Players.LocalPlayer
@@ -202,6 +202,7 @@ AddConnection(UserInputService.InputBegan, function(input: InputObject, gameProc
 
     local bind = UILib.Keybinds[input.KeyCode]
     if bind then
+        warn("Work")
         bind()
     end
 end)
