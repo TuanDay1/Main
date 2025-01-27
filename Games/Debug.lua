@@ -31,7 +31,9 @@ local function updateSettting(index, value)
         current[index] = value
     else
         for i = 1, #keys - 1 do
-            current[keys[i]] = {}
+            if current[keys[i]] == nil then
+                current[keys[i]] = {}
+            end
             current = current[keys[i]]
         end
         local finalKey = keys[#keys]
