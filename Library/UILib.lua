@@ -199,7 +199,7 @@ end)
 AddConnection(UserInputService.InputBegan, function(input: InputObject, gameProcessedEvent: boolean)
     if gameProcessedEvent then return end
     if not EscMenuOpen then return end
-
+    warn("Work2")
     local bind = UILib.Keybinds[input.KeyCode]
     if bind then
         warn("Work")
