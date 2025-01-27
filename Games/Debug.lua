@@ -26,7 +26,7 @@ local window, fileName = UILib:CreateWindow("Debug", "NTCHubDebug")
 local function updateSettting(index, value)
     local keys = string.split(index, "/")
     local current = _env.Config
-    
+
     if #keys == 1 then
         current[index] = value
     else
@@ -95,7 +95,7 @@ more_Tab:Toggle(
 more_Tab:Slider(
     "Đặt thời gian tự động tham gia lại",
     (_env.Config["Rejoin Timer"] and _env.Config["Rejoin Timer"]["Minute"]) or 60,
-    1,
+    5,
     300,
     function(value)
         updateSettting("Rejoin Timer/Minute", value)
