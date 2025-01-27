@@ -197,13 +197,11 @@ AddConnection(GuiService.MenuClosed, function()
     EscMenuOpen = false
 end)
 AddConnection(UserInputService.InputBegan, function(input: InputObject, gameProcessedEvent: boolean)
-    if gameProcessedEvent then return end
-    if not EscMenuOpen then return end
-    warn("Work2")
-    local bind = UILib.Keybinds[input.KeyCode]
-    if bind then
-        warn("Work")
-        bind()
+    if not gameProcessedEvent or EscMenuOpen then
+        local bind = UILib.Keybinds[input.KeyCode]
+        if bind then
+            bind()
+        end
     end
 end)
 AddConnection(player.Idled, function()
