@@ -674,9 +674,11 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
         end)
     end)
     -------------------------------------------------------------------------
+    local tabCount = 0
 
     function window:CreateTab(tabName: string, imageId: string)
         local tab = {}
+        tabCount += 1
 
         local SideUI = UILib.Window.Container.Side.ScrollingFrame
         local tabUI = Create("CanvasGroup", {
@@ -686,6 +688,7 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
             Position = UDim2.fromScale(0, 0),
             BackgroundColor3 = UILib.Theme.KeyBackground,
             BackgroundTransparency = 1,
+            LayoutOrder = tabCount,
             Parent = SideUI,
             ZIndex = 5,
 
