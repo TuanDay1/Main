@@ -12,6 +12,4 @@ _env.Games = {
 
 if _env.Games[gameId] then
     loadstring(_httpget(game, _env.Games[gameId]))()
-else
-    loadstring(_httpget(game, "https://raw.githubusercontent.com/TuanDay1/Main/refs/heads/main/Games/Debug.lua"))()
 end

@@ -64,6 +64,31 @@ GuiService.ErrorMessageChanged:Connect(function()
     end
 end)
 
+---------------------------------------------------------- MAIN
+local debugScripts = {
+    ["Infinite Yield"] = "https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source",
+    ["Dex Explorer"] = "https://raw.githubusercontent.com/AhmadV99/Main/refs/heads/main/Dex-Explorer",
+    ["Turtle Spy"] = "https://raw.githubusercontent.com/Turtle-Brand/Turtle-Spy/main/source.lua",
+}
+
+local main_Tab = window:CreateTab("Chính", "rbxassetid://113518381337162")
+UILib:SelectTab("Chính")
+local scriptName = {}
+for index, _ in pairs(debugScripts) do
+    table.insert(scriptName, index)
+end
+main_Tab:Dropdown(
+    "Select Script:",
+    scriptName,
+    function(value: string)
+        if value == "" then return end
+        if debugScripts[value] == nil then return end
+
+        _httpget(game, debugScripts[value])
+        UILib:Notify("Script", "Đã khởi chạy đoạn mã thành công!", nil, 5)
+    end
+)
+
 ---------------------------------------------------------- MORE
 local more_Tab = window:CreateTab("Thêm", "rbxassetid://113518381337162")
 more_Tab:Toggle(

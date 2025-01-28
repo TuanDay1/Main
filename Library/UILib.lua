@@ -1260,6 +1260,187 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
             end)
         end
 
+        function tab:Dropdown(dropdownText: string, dropdownItems: table, callback)
+            local dropdownUI = Create("Frame", {
+                AutomaticSize = Enum.AutomaticSize.Y,
+                Size = UDim2.new(1, 0, 0, 0),
+                AnchorPoint = Vector2.new(0, 0),
+                Position = UDim2.new(0, 0, 0, 0),
+                BackgroundColor3 = UILib.Theme.KeyBackground,
+                Parent = tabList,
+                ZIndex = 5,
+
+                Create("UICorner", {
+                    CornerRadius = UDim.new(0, 4),
+                }),
+
+                Create("Frame", {
+                    AutomaticSize = Enum.AutomaticSize.Y,
+                    Size = UDim2.new(1, 0, 1, 12),
+                    AnchorPoint = Vector2.new(0, 0),
+                    Position = UDim2.new(0, 0, 0, 0),
+                    BackgroundTransparency = 1,
+                    ZIndex = 6,
+                }),
+
+                Create("TextButton", {
+                    Size = UDim2.new(1, -20, 0, 23),
+                    AnchorPoint = Vector2.new(0.5, 0),
+                    Position = UDim2.new(0.5, 0, 0, 10),
+                    BackgroundColor3 = UILib.Theme.ButtonColor,
+                    Text = "",
+                    ZIndex = 6,
+    
+                    Create("UICorner", {
+                        CornerRadius = UDim.new(0, 4),
+                    }),
+
+                    Create("TextLabel", {
+                        Size = UDim2.new(1, -60, 0.6, 0),
+                        AnchorPoint = Vector2.new(0, 0.5),
+                        Position = UDim2.new(0, 10, 0.5, 0),
+                        RichText = false,
+                        Text = dropdownText,
+                        TextColor3 = UILib.Theme.ButtonTextColor,
+                        FontFace = Font.fromName("Montserrat", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal),
+                        TextScaled = true,
+                        TextXAlignment = Enum.TextXAlignment.Left,
+                        BackgroundTransparency = 1,
+                        ZIndex = 7,
+                    }),
+
+                    Create("ImageLabel", {
+                        Size = UDim2.new(0, 15, 0, 15),
+                        AnchorPoint = Vector2.new(1, 0.5),
+                        Position = UDim2.new(1, -10, 0.5, 0),
+                        BackgroundTransparency = 1,
+                        Image = "rbxassetid://18630017208",
+                        ImageColor3 = UILib.Theme.ButtonTextColor,
+                        Rotation = -90,
+                        ZIndex = 7,
+                    }),
+                }),
+
+                Create("Frame", {
+                    Name = "Container",
+                    Size = UDim2.new(1,-20,0,0),
+                    AnchorPoint = Vector2.new(0.5, 0),
+                    Position = UDim2.new(0.5,0,0,35),
+                    BackgroundColor3 = UILib.Theme.Background,
+                    Visible = false,
+                    ZIndex = 6,
+
+                    Create("UICorner", {
+                        CornerRadius = UDim.new(0, 4),
+                    }),
+
+                    Create("ScrollingFrame", {
+                        Size = UDim2.new(1,-20,1,-20),
+                        AnchorPoint = Vector2.new(0.5, 0),
+                        Position = UDim2.new(0.5,0,0,10),
+                        BackgroundTransparency = 1,
+                        ScrollingDirection = Enum.ScrollingDirection.Y,
+                        ScrollBarThickness = 6,
+                        ScrollBarImageColor3 = UILib.Theme.SideImageColor,
+                        BottomImage = "",
+                        TopImage = "",
+                        CanvasSize = UDim2.new(0,0,0,0),
+                        ZIndex = 7,
+    
+                        Create("UIListLayout", {
+                            Padding = UDim.new(0, 1),
+                            FillDirection = Enum.FillDirection.Vertical
+                        })
+                    }),
+                }),
+            })
+
+            local TextButton = dropdownUI.TextButton
+            local ScrollingFrame = dropdownUI.Container.ScrollingFrame
+
+            local function resize()
+                if ScrollingFrame:FindFirstChild("UIListLayout") then
+                    local UIListLayout = ScrollingFrame.UIListLayout
+                    ScrollingFrame.CanvasSize = UDim2.new(0,0,0,UIListLayout.AbsoluteContentSize.Y) 
+                end
+            end
+            AddConnection(ScrollingFrame.ChildAdded, function(child: Instance)
+                if child:IsA("TextButton") then
+                    resize()
+                end
+            end)
+            AddConnection(ScrollingFrame.ChildRemoved, function(child: Instance)
+                if child:IsA("TextButton") then
+                    resize()
+                end
+            end)
+
+            local dropdownTweening = false
+            AddConnection(TextButton.MouseButton1Click, function()
+                local ImageLabel = TextButton.ImageLabel
+                if dropdownTweening then return end
+                dropdownTweening = true
+
+                if ImageLabel.Rotation == -90 then
+                    local imageTween = TweenService:Create(ImageLabel, TweenInfo.new(0.25), {
+                        Rotation = 0,
+                    })
+                    imageTween:Play()
+                    ScrollingFrame.Visible = true
+                    local frameTween = TweenService:Create(ScrollingFrame, TweenInfo.new(0.25), {
+                        Size = UDim2.new(1,-20,0,100)
+                    })
+                    frameTween:Play()
+                    frameTween.Completed:Wait()
+                else
+                    local imageTween = TweenService:Create(ImageLabel, TweenInfo.new(0.25), {
+                        Rotation = -90,
+                    })
+                    imageTween:Play()
+                    local frameTween = TweenService:Create(ScrollingFrame, TweenInfo.new(0.25), {
+                        Size = UDim2.new(1,-20,0,0)
+                    })
+                    frameTween:Play()
+                    frameTween.Completed:Wait()
+                    ScrollingFrame.Visible = false
+                end
+                itemContainerResize()
+                dropdownTweening = false
+            end)
+
+            local buttonSelect = ""
+            for _, buttonName in pairs(dropdownItems) do
+                local button = UILib.Create("TextButton", {
+                    Name = "Button",
+                    Size = UDim2.new(1,0,0,20),
+                    Position = UDim2.new(0,0,0,0),
+                    BackgroundTransparency = 1,
+                    RichText = true,
+                    FontFace = Font.fromName("Montserrat", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal),
+                    Text = buttonName,
+                    TextSize = 14,
+                    TextColor3 = Color3.fromRGB(255, 255, 255),
+                    ZIndex = 5,
+                    TextXAlignment = Enum.TextXAlignment.Left,
+                    Parent = ScrollingFrame
+                })
+
+                AddConnection(button.MouseButton1Click, function()
+                    if callback ~= nil then
+                        if buttonSelect == buttonName then
+                            TextButton.TextLabel = dropdownText
+                            callback("")
+                        else
+                            buttonSelect = buttonName
+                            TextButton.TextLabel = string.format("%s %s", dropdownText, buttonName)
+                            callback(buttonName)
+                        end
+                    end
+                end)
+            end
+            itemContainerResize()
+        end
+
         return tab
     end
 
