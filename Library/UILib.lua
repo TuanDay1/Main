@@ -1404,7 +1404,7 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
                     frameTween.Completed:Wait()
                     ScrollingFrame.Visible = false
                 end
-                itemContainerResize()
+                itemContainerResize(ScrollingFrame)
                 dropdownTweening = false
             end)
 
@@ -1438,7 +1438,7 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
                     end
                 end)
             end
-            itemContainerResize()
+            itemContainerResize(ScrollingFrame)
         end
 
         return tab
