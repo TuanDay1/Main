@@ -928,6 +928,8 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
                     callback(active)
                 end
             end)
+
+            itemContainerResize(tabList)
         end
 
         function tab:Slider(sliderTitle: string, defaultValue: number, minValue: number, maxValue: number, callback)
@@ -1102,6 +1104,8 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
                     updateSlider(tonumber(sliderTextBox.Text))
                 end
             end)
+
+            itemContainerResize(tabList)
         end
 
         function tab:TextBox(textBoxTitle: string, textBoxButtonText: string, textBoxPlaceholder: string, callback)
@@ -1208,6 +1212,8 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
                     callback(textBox.Text)
                 end
             end)
+
+            itemContainerResize(tabList)
         end
 
         function tab:Button(buttonText: string, callback)
@@ -1267,6 +1273,8 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
                     callback()
                 end
             end)
+
+            itemContainerResize(tabList)
         end
 
         function tab:Dropdown(dropdownText: string, dropdownItems: table, callback)

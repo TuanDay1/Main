@@ -25,6 +25,7 @@ local VirtualInputManager = game:GetService('VirtualInputManager')
 local player = Players.LocalPlayer
 local playerGui = player.PlayerGui
 
+local deathConnection
 local playerCharacterPosition
 local TeleportLocations = {
     ["Zones"] = {
@@ -228,6 +229,38 @@ RunService.Heartbeat:Connect(function()
             playerCharacterPosition = nil
         end
     end
+    if _env.Config["Infinite Oxygen"] then
+        local playerCharacter = player.Character or player.CharacterAdded:Wait()
+        local playerHumanoid = playerCharacter:WaitForChild("Humanoid")
+
+        if not deathConnection then
+            deathConnection = playerHumanoid.Died:Connect(function()
+                task.delay(9, function()
+                    local decal = playerCharacter:FindFirstChild("DivingTank")
+                    if decal and decal:IsA("Decal") then
+                        decal:Destroy()
+                    end
+
+                    local newDecal = Instance.new("Decal")
+                    newDecal.Name = "DivingTank"
+                    newDecal.Parent = workspace
+                    newDecal:SetAttribute('Tier', 1/0)
+                    newDecal.Parent = playerCharacter
+                    deathConnection = nil
+                end)
+            end)
+        end
+        if deathConnection and playerHumanoid.Health > 0 then
+            if not playerCharacter:FindFirstChild("DivingTank") then
+                local newDecal = Instance.new("Decal")
+                newDecal.Name = "DivingTank"
+                newDecal.Parent = workspace
+                newDecal:SetAttribute('Tier', 1/0)
+                newDecal.Parent = playerCharacter
+                deathConnection = nil
+            end
+        end
+    end
 end)
 
 ---------------------------------------------------------- MAIN
@@ -283,6 +316,15 @@ main_Tab:Toggle(
                 object.CanCollide = value
             end
         end
+    end
+)
+
+main_Tab:Toggle(
+    "Oxy vô hạn",
+    "Bạn sẽ không bị hết oxy",
+    _env.Config["Infinite Oxygen"] or false,
+    function(value: boolean)
+        updateSettting("Infinite Oxygen", value)
     end
 )
 
