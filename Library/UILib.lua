@@ -1356,7 +1356,8 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
             })
 
             local TextButton = dropdownUI.TextButton
-            local ScrollingFrame = dropdownUI.Container.ScrollingFrame
+            local Container = dropdownUI.Container
+            local ScrollingFrame = Container.ScrollingFrame
 
             local function resize()
                 if ScrollingFrame:FindFirstChild("UIListLayout") then
@@ -1386,8 +1387,8 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
                         Rotation = 0,
                     })
                     imageTween:Play()
-                    ScrollingFrame.Visible = true
-                    local frameTween = TweenService:Create(ScrollingFrame, TweenInfo.new(0.25), {
+                    Container.Visible = true
+                    local frameTween = TweenService:Create(Container, TweenInfo.new(0.25), {
                         Size = UDim2.new(1,-20,0,100)
                     })
                     frameTween:Play()
@@ -1397,21 +1398,20 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
                         Rotation = -90,
                     })
                     imageTween:Play()
-                    local frameTween = TweenService:Create(ScrollingFrame, TweenInfo.new(0.25), {
+                    local frameTween = TweenService:Create(Container, TweenInfo.new(0.25), {
                         Size = UDim2.new(1,-20,0,0)
                     })
                     frameTween:Play()
                     frameTween.Completed:Wait()
-                    ScrollingFrame.Visible = false
+                    Container.Visible = false
                 end
-                itemContainerResize(ScrollingFrame)
+                itemContainerResize(tabList)
                 dropdownTweening = false
             end)
 
             local buttonSelect = ""
             for _, buttonName in pairs(dropdownItems) do
                 local button = Create("TextButton", {
-                    Name = "Button",
                     Size = UDim2.new(1,0,0,20),
                     Position = UDim2.new(0,0,0,0),
                     BackgroundTransparency = 1,
@@ -1438,7 +1438,7 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
                     end
                 end)
             end
-            itemContainerResize(ScrollingFrame)
+            itemContainerResize(tabList)
         end
 
         return tab
