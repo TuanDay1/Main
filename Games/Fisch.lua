@@ -3,6 +3,8 @@ local _env = getgenv and getgenv() or {}
 local _gethui = gethui or function () end
 local _httpget = httpget or game.HttpGet or function () end
 local _setclipboard = setclipboard or function () end
+local _keypress = keypress or function () end
+local _keyrelease = keyrelease or function () end
 
 ------------------------------------------------
 local UILib = loadstring(_httpget(game, "https://raw.githubusercontent.com/TuanDay1/Main/refs/heads/main/Library/UILib.lua"))()
@@ -64,13 +66,45 @@ GuiService.ErrorMessageChanged:Connect(function()
     end
 end)
 
+local autoShakeConnection = nil
 playerGui.ChildAdded:Connect(function(child: Instance)
     if child.Name == "reel" then
         if _env.Config["Auto Reel"] == true then
             task.wait(math.random(2,4))
             local reelfinished = ReplicatedStorage:WaitForChild("events"):FindFirstChild("reelfinished ")
-            reelfinished:FireServer(math.random(91,100), true)
+            reelfinished:FireServer(math.random(91,100), false)
         end
+    elseif child.Name == "shakeui" and _env.Config["Auto Shake"] then
+        local hud = playerGui:WaitForChild("hud")
+        hud.Enabled = false
+        _keypress(Enum.KeyCode.BackSlash)
+        local debounce = false
+        autoShakeConnection = child.safezone.ChildAdded:Connect(function(child2: Instance)
+            if child2.Name == "button" then
+                repeat
+                    task.wait()
+                until debounce == false
+                debounce = true
+                task.wait(0.2)
+                _keypress(Enum.KeyCode.Down)
+                _keyrelease(Enum.KeyCode.Down)
+                task.wait(0.1)
+                _keypress(Enum.KeyCode.Return)
+                _keyrelease(Enum.KeyCode.Return)
+                task.wait(0.2)
+                debounce = false
+            end
+        end)
+    end
+end)
+playerGui.ChildRemoved:Connect(function(child: Instance)
+    if child.Name == "shakeui" and _env.Config["Auto Shake"] == true then
+        if autoShakeConnection then
+            autoShakeConnection:Disconnect()
+            _keypress(Enum.KeyCode.BackSlash)
+        end
+        local hud = playerGui:WaitForChild("hud")
+        hud.Enabled = false
     end
 end)
 
@@ -83,6 +117,31 @@ main_Tab:Toggle(
     _env.Config["Auto Reel"] or false,
     function(value: boolean)
         updateSettting("Auto Reel", value)
+    end
+)
+
+main_Tab:CheckBox(
+    "Tự động lắc",
+    "Tự động lắc khi câu cá",
+    _env.Config["Auto Shake"] or false,
+    function(value)
+        updateSettting("Auto Shake", value)
+    end
+)
+
+main_Tab:Toggle(
+    "Đi trên mặt nước",
+    "Bạn sẽ có thể đi trên mặt nước",
+    false,
+    function(value)
+        local zones = game.Workspace:WaitForChild("zones")
+        local fishing = zones:FindFirstChild("fishing")
+
+        for _, object in pairs(fishing:GetChildren()) do
+            if object:IsA("UnionOperation") or object:IsA("Part") or object:IsA("BasePart") or object:IsA("MeshPart") then
+                object.CanCollide = value
+            end
+        end
     end
 )
 
