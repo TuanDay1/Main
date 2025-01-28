@@ -120,7 +120,7 @@ main_Tab:Toggle(
     end
 )
 
-main_Tab:CheckBox(
+main_Tab:Toggle(
     "Tự động lắc",
     "Tự động lắc khi câu cá",
     _env.Config["Auto Shake"] or false,
