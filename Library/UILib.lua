@@ -1428,13 +1428,13 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
                 AddConnection(button.MouseButton1Click, function()
                     if callback ~= nil then
                         if buttonSelect == buttonName then
+                            buttonSelect = ""
                             TextButton.TextLabel.Text = dropdownText
-                            callback("")
                         else
                             buttonSelect = buttonName
                             TextButton.TextLabel.Text = string.format("%s %s", dropdownText, buttonName)
-                            callback(buttonName)
                         end
+                        callback(buttonSelect)
                     end
                 end)
             end

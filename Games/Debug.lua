@@ -84,7 +84,7 @@ main_Tab:Dropdown(
         if value == "" then return end
         if debugScripts[value] == nil then return end
 
-        _httpget(game, debugScripts[value])
+        loadstring(_httpget(game, debugScripts[value]))()
         UILib:Notify("Script", "Đã khởi chạy đoạn mã thành công!", nil, 5)
     end
 )
