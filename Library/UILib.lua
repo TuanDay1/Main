@@ -581,6 +581,7 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
                     Create("UIListLayout", {
                         Padding = UDim.new(0, 5),
                         HorizontalAlignment = Enum.HorizontalAlignment.Center,
+                        SortOrder = Enum.SortOrder.LayoutOrder
                     }),
                 }),
             }),
@@ -784,6 +785,7 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
             Create("UIListLayout", {
                 Padding = UDim.new(0, 5),
                 HorizontalAlignment = Enum.HorizontalAlignment.Left,
+                SortOrder = Enum.SortOrder.LayoutOrder
             }),
         })
         autoContainerResize(tabList)

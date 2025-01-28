@@ -2,6 +2,7 @@
 local _env = getgenv and getgenv() or {}
 local _gethui = gethui or function () end
 local _httpget = httpget or game.HttpGet or function () end
+local _httprequest = http_request or request or HttpPost or syn.request or function () end
 local _setclipboard = setclipboard or function () end
 local _hookmetamethod = hookmetamethod or function () end
 local _getnamecallmethod = getnamecallmethod or function () end
@@ -75,6 +76,80 @@ local function updateSettting(index, value)
     if index == "Auto Save" or _env.Config["Auto Save"] then
         FileManager:WriteFile(fileName, _env.Config)
     end
+end
+
+function ColorConverter(color)
+	local r = math.floor(color.R * 255 + 0.5)
+	local g = math.floor(color.G * 255 + 0.5)
+	local b = math.floor(color.B * 255 + 0.5)
+	return (r * 65536) + (g * 256) + b
+end
+
+function FormatNumber(number: number)
+    local formatted = tostring(number):reverse():gsub("(%d%d%d)", "%1,"):reverse()
+
+    if formatted:sub(1, 1) == "," then
+        formatted = formatted:sub(2)
+    end
+    return formatted
+end
+
+function WebhookSendJSON(title: string, message: string, mention: boolean)
+    if _env.Config.Webhook == nil then return end
+    if _env.Config.Webhook.Url == nil then return end
+    if _env.Config.Webhook.Url == "" then return end
+    if _env.Config.Webhook.Mention == nil then
+        _env.Config.Webhook.Mention = "@everyone"
+    end
+
+    local content = ""
+    if mention == true then
+        content = _env.Config.Webhook.Mention
+    end
+
+    local playerstats = ReplicatedStorage:WaitForChild("playerstats"):WaitForChild(player.Name):FindFirstChild("Stats")
+
+    local data = {
+        content = content,
+        embeds = {
+            {
+                title = "Fisch",
+                fields = {
+                    {
+                        name = "Người dùng:",
+                        value = string.format("||[Level %s] [%s C$] %s||", FormatNumber(playerstats.level.Value), FormatNumber(playerstats.coins.Value), player.Name),
+                        inline = false,
+                    },
+                    {
+                        name = title,
+                        value = message,
+                        inline = false,
+                    }
+                },
+                footer = {
+                    text = "NguThiChet Hub",
+                    -- icon_url = "https://phanphu.site/NTC/attachments/icon.png"
+                },
+                color = ColorConverter(Color3.fromRGB(255, 205, 135))
+            }
+        }
+    }
+
+	local success, error
+	repeat
+        local url = string.format("https://customtech.store/proxy.php?url=%s", _env.Config.Webhook.Url)
+		local body = HttpService:JSONEncode(data)
+        local header = {["content-type"] = "application/json"}
+
+        local dataToRequest = {Url = url, Body = body, Method = "POST", Headers = header}
+		success, error = pcall(function()
+            _httprequest(dataToRequest)
+		end)
+		task.wait(7)
+		if error then
+			warn(error)
+		end
+	until success or tostring(error) ~= "attempt to call a string value" or tostring(error) == "nil"
 end
 
 --[[
@@ -222,6 +297,43 @@ teleport_Tab:Dropdown(
         local playerCharacter = player.Character or player.CharacterAdded:Wait()
         local playerHumanoidRootPart = playerCharacter:WaitForChild("HumanoidRootPart")
         playerHumanoidRootPart.CFrame = TeleportLocations["Zones"][value]
+    end
+)
+
+---------------------------------------------------------- WEBHOOK
+local webhook_Tab = window:CreateTab("Webhook", "rbxassetid://113518381337162")
+webhook_Tab:TextBox(
+    "Đường dẫn Webhook",
+    "Cập nhật",
+    "https://",
+    function(value)
+        updateSettting("Webhook/Url", value)
+        UILib:Notify("Webhook", "Đã cập nhật đường dẫn webhook thành công!", nil, 5)
+    end
+)
+
+webhook_Tab:TextBox(
+    "Đề cập (userid)",
+    "Cập nhật",
+    "Để trống sẽ tự động đề cập @everyone",
+    function(value)
+        if value == nil or value:match("^%s*$") ~= nil then
+            updateSettting("Webhook/Mention", "@everyone")
+        else
+            if tonumber(value) then
+                updateSettting("Webhook/Mention", string.format("<@%s>", value))
+            else
+                updateSettting("Webhook/Mention", value)
+            end
+        end
+        UILib:Notify("Webhook", "Đã cập nhật đề cập webhook thành công!", nil, 5)
+    end
+)
+
+webhook_Tab:Button(
+    "Chạy thử Webhook",
+    function()
+        WebhookSendJSON("Chạy thử Webhook:", "Cháu lên ba cháu đi mẫu giáo...", false)
     end
 )
 
