@@ -77,7 +77,7 @@ playerGui.ChildAdded:Connect(function(child: Instance)
     elseif child.Name == "shakeui" and _env.Config["Auto Shake"] then
         local hud = playerGui:WaitForChild("hud")
         hud.Enabled = false
-        _keypress(Enum.KeyCode.BackSlash)
+        _keypress(0xDC)
         local debounce = false
         autoShakeConnection = child.safezone.ChildAdded:Connect(function(child2: Instance)
             if child2.Name == "button" then
@@ -86,11 +86,11 @@ playerGui.ChildAdded:Connect(function(child: Instance)
                 until debounce == false
                 debounce = true
                 task.wait(0.2)
-                _keypress(Enum.KeyCode.Down)
-                _keyrelease(Enum.KeyCode.Down)
+                _keypress(0x28)
+                _keyrelease(0x28)
                 task.wait(0.1)
-                _keypress(Enum.KeyCode.Return)
-                _keyrelease(Enum.KeyCode.Return)
+                _keypress(0x0D)
+                _keyrelease(0x0D)
                 task.wait(0.2)
                 debounce = false
             end
@@ -101,7 +101,7 @@ playerGui.ChildRemoved:Connect(function(child: Instance)
     if child.Name == "shakeui" and _env.Config["Auto Shake"] == true then
         if autoShakeConnection then
             autoShakeConnection:Disconnect()
-            _keypress(Enum.KeyCode.BackSlash)
+            _keypress(0xDC)
         end
         local hud = playerGui:WaitForChild("hud")
         hud.Enabled = false
