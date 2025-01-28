@@ -3,8 +3,8 @@ local _env = getgenv and getgenv() or {}
 local _gethui = gethui or function () end
 local _httpget = httpget or game.HttpGet or function () end
 local _setclipboard = setclipboard or function () end
-local _keypress = keypress or function () end
-local _keyrelease = keyrelease or function () end
+local _hookmetamethod = hookmetamethod or function () end
+local _getnamecallmethod = getnamecallmethod or function () end
 
 ------------------------------------------------
 local UILib = loadstring(_httpget(game, "https://raw.githubusercontent.com/TuanDay1/Main/refs/heads/main/Library/UILib.lua"))()
@@ -17,10 +17,14 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
 local GuiService = game:GetService("GuiService")
+local RunService = game:GetService("RunService")
+local VirtualInputManager = game:GetService('VirtualInputManager')
 
 ----------Variables----------
 local player = Players.LocalPlayer
 local playerGui = player.PlayerGui
+
+local playerCharacterPosition
 
 ----------------------------------------------------------
 local window, fileName = UILib:CreateWindow("Fisch", "NTCHub")
@@ -57,6 +61,17 @@ end
 
 ]]--
 
+do
+    local old; old = _hookmetamethod(game, "__namecall", function(self, ...)
+        local method, args = _getnamecallmethod(), {...}
+        if method == 'FireServer' and self.Name == 'afk' then
+            args[1] = false
+            return old(self, unpack(args))
+        end
+        return old(self, ...)
+    end)
+end
+
 GuiService.ErrorMessageChanged:Connect(function()
     if GuiService:GetErrorCode() == Enum.ConnectionError.DisconnectLuaKick then
         if _env.Config["Auto Rejoin"] == true then
@@ -66,51 +81,67 @@ GuiService.ErrorMessageChanged:Connect(function()
     end
 end)
 
-local autoShakeConnection = nil
-playerGui.ChildAdded:Connect(function(child: Instance)
-    if child.Name == "reel" then
-        if _env.Config["Auto Reel"] == true then
-            task.wait(math.random(2,4))
-            local reelfinished = ReplicatedStorage:WaitForChild("events"):FindFirstChild("reelfinished ")
-            reelfinished:FireServer(math.random(91,100), false)
-        end
-    elseif child.Name == "shakeui" and _env.Config["Auto Shake"] then
-        local hud = playerGui:WaitForChild("hud")
-        hud.Enabled = false
-        _keypress(0xDC)
-        local debounce = false
-        autoShakeConnection = child.safezone.ChildAdded:Connect(function(child2: Instance)
-            if child2.Name == "button" then
-                repeat
-                    task.wait()
-                until debounce == false
-                debounce = true
-                task.wait(0.2)
-                _keypress(0x28)
-                _keyrelease(0x28)
-                task.wait(0.1)
-                _keypress(0x0D)
-                _keyrelease(0x0D)
-                task.wait(0.2)
-                debounce = false
-            end
-        end)
+local function findRod()
+    local playerCharacter = player.Character or player.CharacterAdded:Wait()
+    local Rod = playerCharacter:FindFirstChildOfClass("Tool")
+    if Rod and Rod:FindFirstChild("values") then
+        return Rod
     end
-end)
-playerGui.ChildRemoved:Connect(function(child: Instance)
-    if child.Name == "shakeui" and _env.Config["Auto Shake"] == true then
-        if autoShakeConnection then
-            autoShakeConnection:Disconnect()
-            _keypress(0xDC)
+    return nil
+end
+
+RunService.Heartbeat:Connect(function()
+    if _env.Config["Auto Shake"] then
+        if playerGui:FindFirstChild("shakeui") and playerGui["shakeui"]:FindFirstChild("safezone") and playerGui["shakeui"]["safezone"]:FindFirstChild("button") then
+            GuiService.SelectedObject = playerGui["shakeui"]["safezone"]["button"]
+            if GuiService.SelectedObject == playerGui["shakeui"]["safezone"]["button"] then
+                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
+                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
+            end
         end
-        local hud = playerGui:WaitForChild("hud")
-        hud.Enabled = false
+    end
+    if _env.Config["Auto Reel"] then
+        local Rod = findRod()
+        if Rod and Rod["values"]["lure"].Value == 100 and task.wait(.5) then
+            local reelfinished = ReplicatedStorage:WaitForChild("events"):FindFirstChild("reelfinished ")
+            reelfinished:FireServer(100, true)
+        end
+    end
+    if _env.Config["Auto Cast"] then
+        local Rod = findRod()
+        if Rod and Rod["values"]["lure"].Value <= .001 and task.wait(.5) then
+            local cast = Rod:WaitForChild("events"):FindFirstChild("cast")
+            cast:FireServer(100, 1)
+        end
+    end
+    if _env.Config["Freeze Character"] then
+        local playerCharacter = player.Character or player.CharacterAdded:Wait()
+        local playerHumanoidRootPart = playerCharacter:WaitForChild("HumanoidRootPart")
+
+        local Rod = findRod()
+        if Rod and playerCharacterPosition == nil then
+            playerCharacterPosition = playerHumanoidRootPart.CFrame
+        elseif Rod and playerCharacterPosition ~= nil then
+            playerHumanoidRootPart.CFrame = playerCharacterPosition
+        else
+            playerCharacterPosition = nil
+        end
     end
 end)
 
 ---------------------------------------------------------- MAIN
 local main_Tab = window:CreateTab("Chính", "rbxassetid://113518381337162")
 UILib:SelectTab("Chính")
+
+main_Tab:Toggle(
+    "Tự động thả câu",
+    "Tự động thả câu khi bật",
+    _env.Config["Auto Cast"] or false,
+    function(value: boolean)
+        updateSettting("Auto Cast", value)
+    end
+)
+
 main_Tab:Toggle(
     "Tự động cuộn dây",
     "Tự động cuộn dây khi câu cá",
@@ -124,8 +155,17 @@ main_Tab:Toggle(
     "Tự động lắc",
     "Tự động lắc khi câu cá",
     _env.Config["Auto Shake"] or false,
-    function(value)
+    function(value: boolean)
         updateSettting("Auto Shake", value)
+    end
+)
+
+main_Tab:Toggle(
+    "Đóng băng nhân vật",
+    "Nhân vật của bạn sẽ bị đóng băng khi cầm cần câu",
+    _env.Config["Freeze Character"] or false,
+    function(value: boolean)
+        updateSettting("Freeze Character", value)
     end
 )
 
@@ -133,7 +173,7 @@ main_Tab:Toggle(
     "Đi trên mặt nước",
     "Bạn sẽ có thể đi trên mặt nước",
     false,
-    function(value)
+    function(value: boolean)
         local zones = game.Workspace:WaitForChild("zones")
         local fishing = zones:FindFirstChild("fishing")
 
@@ -151,7 +191,7 @@ more_Tab:Toggle(
     "Tự động tham gia lại (Bị đuổi)",
     "Tự động tham gia lại nếu như bị trò chơi đuổi",
     _env.Config["Auto Rejoin"] or false,
-    function(value)
+    function(value: boolean)
         updateSettting("Auto Rejoin", value)
     end
 )
@@ -166,7 +206,7 @@ more_Tab:Toggle(
     "Tự động tham gia lại (Thời gian)",
     "Tự động tham gia lại sau khi đã hết thời gian đã đặt trước đó",
     (_env.Config["Rejoin Timer"] and _env.Config["Rejoin Timer"]["Enable"]) or false,
-    function(value)
+    function(value: boolean)
         updateSettting("Rejoin Timer/Enable", value)
         if value == true then
             rejoinTimer()
