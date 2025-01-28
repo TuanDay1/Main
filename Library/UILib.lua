@@ -1420,7 +1420,7 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
                     Text = buttonName,
                     TextSize = 14,
                     TextColor3 = Color3.fromRGB(255, 255, 255),
-                    ZIndex = 5,
+                    ZIndex = 8,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     Parent = ScrollingFrame
                 })
@@ -1428,11 +1428,11 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
                 AddConnection(button.MouseButton1Click, function()
                     if callback ~= nil then
                         if buttonSelect == buttonName then
-                            TextButton.TextLabel = dropdownText
+                            TextButton.TextLabel.Text = dropdownText
                             callback("")
                         else
                             buttonSelect = buttonName
-                            TextButton.TextLabel = string.format("%s %s", dropdownText, buttonName)
+                            TextButton.TextLabel.Text = string.format("%s %s", dropdownText, buttonName)
                             callback(buttonName)
                         end
                     end
