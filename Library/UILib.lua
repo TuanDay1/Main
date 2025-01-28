@@ -1410,7 +1410,7 @@ function UILib:CreateWindow(gameName: string, saveFolder: string)
 
             local buttonSelect = ""
             for _, buttonName in pairs(dropdownItems) do
-                local button = UILib.Create("TextButton", {
+                local button = Create("TextButton", {
                     Name = "Button",
                     Size = UDim2.new(1,0,0,20),
                     Position = UDim2.new(0,0,0,0),
