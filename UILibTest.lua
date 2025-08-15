@@ -725,6 +725,7 @@ function UILib:CreateWindow(Config: table)
 		end)
 
 		self:AddConnection(KeySystem_SubmitButton.Activated, function()
+			warn("Work")
 			local text = KeySystem_TextBox.Text
 			if Config.KeySystem.Keys[text] then
 				self:Notify("Key System", "Key valid!", "time", 5)
