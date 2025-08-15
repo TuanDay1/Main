@@ -116,8 +116,7 @@ table.insert(UILib.Windows, HubScreen)
 
 ------------------------------------------------ Library Functions
 function UILib:AddConnection(Signal, Function)
-	if HubScreen.Parent ~= CoreGui then
-		warn("Work")
+	if not HubScreen then
 		return
 	end
 	local SignalConnect = Signal:Connect(Function)
@@ -183,9 +182,6 @@ function UILib:MakeDraggable(DragPoint, Main)
 	end)
 end
 
-function UILib:IsRunning()
-	return HubScreen.Parent == CoreGui
-end
 function UILib:Hide()
 	HubScreen.Enabled = not HubScreen.Enabled
 end
@@ -726,7 +722,6 @@ function UILib:CreateWindow(Config: table)
 		end)
 
 		self:AddConnection(KeySystem_SubmitButton.Activated, function()
-			warn("Work")
 			local text = KeySystem_TextBox.Text
 			if Config.KeySystem.Keys[text] then
 				self:Notify("Key System", "Key valid!", "time", 5)
