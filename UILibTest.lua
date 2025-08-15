@@ -117,6 +117,7 @@ table.insert(UILib.Windows, HubScreen)
 ------------------------------------------------ Library Functions
 function UILib:AddConnection(Signal, Function)
 	if HubScreen.Parent ~= CoreGui then
+		warn("Work")
 		return
 	end
 	local SignalConnect = Signal:Connect(Function)
