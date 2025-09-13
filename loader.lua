@@ -8,6 +8,7 @@ local _httpget = httpget or game.HttpGet or function () end
 local gameId = game.GameId
 _env.Games = {
     [5750914919] = "https://raw.githubusercontent.com/TuanDay1/Main/refs/heads/main/Games/Fisch.lua",
+    [7772280283] = "https://raw.githubusercontent.com/TuanDay1/Main/refs/heads/main/Games/GVS.luau",
 }
 
 if _env.Games[gameId] then
